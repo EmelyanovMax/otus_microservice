@@ -1,0 +1,43 @@
+version: "3.3"
+services:
+    php:
+      build: ./docker/php
+      volumes:
+        - ./public:/var/www
+      networks:
+        - php-app-network
+    # Nginx service
+    nginx:
+      image: nginx:alpine
+      container_name: php-nginx
+      ports:
+        - 8080:80
+      volumes:
+        - ./public:/var/www
+        - ./nginx/conf.d/:/etc/nginx/conf.d/
+      networks:
+        - php-app-network
+    db:
+      platform: linux/x86_64
+      image: mysql:8.0
+      container_name: mysql-db
+      ports:
+        - "3306:3306"
+      volumes:
+        - ./public:/var/www
+        - mysql-data:/var/lib/mysql
+      environment:
+        MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+        MYSQL_DATABASE: ${DB_DATABASE}
+        MYSQL_USER: ${DB_USERNAME}
+        MYSQL_PASSWORD: ${DB_PASSWORD}
+      env_file:
+        - ./.env
+      networks:
+        - php-app-network
+networks:
+  php-app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
