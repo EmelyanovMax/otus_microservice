@@ -10,9 +10,10 @@ class HealthController extends Controller
      * Displays homepage.
      *
      * @return string
+     * @throws \JsonException
      */
     public function actionIndex()
     {
-        return 'OK';
+        return json_encode(['status' => 'OK'], JSON_THROW_ON_ERROR);
     }
 }
